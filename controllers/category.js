@@ -10,7 +10,9 @@ exports.category_add_get = (req, res) => {
     res.render('category/add');
 }
 
-exports.category_add_post = async (req, res) =>{  
+exports.category_add_post = async (req, res) => {  
+    console.log("req.body");  
+
     console.log(req.body);  
 
     let category = new Category(req.body);
@@ -38,7 +40,7 @@ exports.category_index_get = (req, res) => {
 exports.category_show_get = (req, res) => {
     console.log(req.query.id);
   
-    Category.findById(req.query.id).populate('event')
+    Category.findById(req.query.id)
     .then((category) => {
         console.log(category)
         res.render('category/detail', {category, dayjs})
