@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Category Schema
 const categorySchema = mongoose.Schema({
 
-  name: String,
+  name: String
   // item_img: {
   //   type: String,
   //   default: "",
