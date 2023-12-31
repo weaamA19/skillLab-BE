@@ -97,4 +97,3 @@ exports.courses_update_post = (req,res) => {
         console.log(err);
     })
 }
-
