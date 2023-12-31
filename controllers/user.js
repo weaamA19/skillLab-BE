@@ -1,0 +1,81 @@
+
+const {User} = require('../models/User')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
+// Number of rounds to do hashing more number means more security (Rounds to be crypted to be more deficult to be hacked)
+salt = 10;
+
+// RESTFUL API's for Registration and Authentication
+
+exports.user_signup_post = (req, res) => {
+    let user = new User(req.body);
+
+    let hash = bcrypt.hashSync(req.body.password, salt);
+    console.log(hash);
+
+    user.password = hash;
+
+    user.save()
+    .then(()=> {
+        res.json({"message": "User Created Successfully!!!" })
+    })
+    .catch((err) => {
+        res.json({"message": err.message})
+    })
+}
+
+exports.user_signin_post = async (req, res) => {
+    let {username, emailAddress, password} = req.body;
+    console.log(emailAddress);
+
+    try {
+
+        // Find the user by emailAddress or username
+        let user = await User.findOne({
+            $or: [
+                { emailAddress},
+                { username}
+            ]
+        });
+
+        // let user = await User.findOne({emailAddress})
+        // console.log(user);
+
+
+        if(!user) {
+            return res.json({"message": "User not found!!!"}).status(400)
+        }
+
+        // Password Comparison
+        const isMatched = await bcrypt.compareSync(password, user.password);
+        console.log(password);
+        console.log(user.password);
+
+        if(!isMatched) {
+            return res.json({"message": "Password Not Matched!!"}).status(400)
+        }
+
+        // Generate JWT
+        const payload = {
+            user: {
+                id: user._id
+            }
+        }
+  
+      jwt.sign(
+        payload,
+        process.env.SECRET,
+        {expiresIn: 36000000},
+        (err, token) => {
+          if (err) throw err;
+          res.json({token}).status(200)
+        }
+      )
+
+    }
+    catch(err) {
+        console.log(err);
+        res.json({"message": "You are not LoggedIn"}).status(401)
+    }
+}

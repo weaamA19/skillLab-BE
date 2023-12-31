@@ -52,7 +52,7 @@ exports.category_show_get = (req, res) => {
 }
 
 exports.category_delete_get = (req, res) => {
-    console.log(req.query.id);  // for debugging purpose
+    console.log(req.query.id); 
     Category.findByIdAndDelete(req.query.id)
     .then((category) => {
         res.json({category})

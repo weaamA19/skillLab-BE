@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const coursesSchema = new Schema(
   {
     category_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type:mongoose.Schema.Types.ObjectId,
       ref: 'Category'
     },
 
@@ -14,7 +14,7 @@ const coursesSchema = new Schema(
     },
 
     duration: {
-      type: Number,
+      type: String,
       required: true
     },
 
@@ -24,9 +24,9 @@ const coursesSchema = new Schema(
     },
 
     price: {
-      type: Number,
+      type: String,
       required: true
-    },
+    }
 
   },
   {
