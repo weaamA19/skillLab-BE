@@ -21,7 +21,7 @@ router.get("/detail", cartCtrl.cart_show_get);
 router.delete("/delete", cartCtrl.cart_delete_get);
 router.get("/edit", cartCtrl.cart_edit_get);
 router.put("/update", cartCtrl.cart_update_put);
-
+router.delete(`/:user_id/courses/:course_id`, cartCtrl.cart_courses_delete);
 
 //Export
 module.exports = router;

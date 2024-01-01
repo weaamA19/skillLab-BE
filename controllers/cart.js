@@ -27,11 +27,14 @@ exports.cart_add_post = (req, res) => {
     }) 
 }
 
-//This function is to display the cart
+//This function is to display the cart based on the user_id
 exports.cart_index_get = (req, res) => {
-  // const { userId } = req.query;
-  // Cart.findOne({ userId: userId }).populate('user_id').populate('courses')
-  Cart.find().populate('user_id').populate('courses') 
+  // const { user_id } = req.body;
+  console.log(req.query.id)
+  console.log("req.body", req.query.id)
+
+  Cart.findOne({ user_id: req.query.id }).populate('user_id').populate('courses')
+  // Cart.find().populate('user_id').populate('courses') 
   .then((cart) => {
         res.json({ cart })
     })
@@ -78,24 +81,6 @@ exports.cart_edit_get = (req,res) => {
   })
 }
 
-//This Code creates a new array donot add on the existing one !
-// exports.cart_update_put = (req, res) => {
-//   console.log(req.body._id);
-
-//   const updatedCart = req.body;
-//   Cart.findByIdAndUpdate(req.body._id, updatedCart, { new: true })
-//     .then((cart) => {
-//       if (!cart) {
-//         return res.status(404).json({ message: 'Cart not found' });
-//       }
-//       res.json({ cart });
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//       res.status(500).json({ message: 'Error updating cart' });
-//     });
-// };
-
 // This New Update function was used to ensure that 
 exports.cart_update_put = (req, res) => {
   // console.log("Cart ID", req.body._id);
@@ -118,5 +103,38 @@ exports.cart_update_put = (req, res) => {
     .catch((error) => {
       console.log(error);
       res.status(500).json({ message: 'Error updating cart' });
+    });
+};
+
+exports.cart_courses_delete = (req, res) => {
+  const { user_id, course_id } = req.params; //obtaining the user id and course id from the params
+
+  Cart.findOne({ user_id }) // Find the cart belonging to the current user
+    .then((cart) => {
+      const courseIndex = cart.courses.findIndex(course => course.toString() === course_id); //find removed course index
+
+      if (courseIndex !== -1) {
+        const updatedCourses = [
+          ...cart.courses.slice(0, courseIndex), //creates a new array for all the elements before the removed course
+          ...cart.courses.slice(courseIndex + 1) //creates a new array for all the elements after the removed course
+        ]; //The (...) are used for arrays concatenation
+
+        cart.courses = updatedCourses;
+
+        cart.save()
+          .then(() => {
+            res.json({ message: 'Course removed from cart successfully', cart });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ message: 'Error saving the updated cart' });
+          });
+      } else {
+        res.status(404).json({ message: 'Course not found in the cart' });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: 'Error finding the user cart' });
     });
 };
