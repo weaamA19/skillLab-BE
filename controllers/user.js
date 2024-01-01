@@ -26,16 +26,16 @@ exports.user_signup_post = (req, res) => {
 }
 
 exports.user_signin_post = async (req, res) => {
-    let {username, emailAddress, password} = req.body;
-    console.log(emailAddress);
+    let {identifier, password} = req.body;
+    console.log(identifier);
 
     try {
 
         // Find the user by emailAddress or username
         let user = await User.findOne({
             $or: [
-                { emailAddress},
-                { username}
+                { emailAddress: identifier},
+                { username: identifier}
             ]
         });
 
@@ -78,4 +78,14 @@ exports.user_signin_post = async (req, res) => {
         console.log(err);
         res.json({"message": "You are not LoggedIn"}).status(401)
     }
+}
+
+exports.user_show_get = (req, res) => {
+    User.findById(req.query.id)
+    .then((user)=> {
+        res.json({user})
+    })
+    .catch((err) => {
+        console.log(err);
+    })
 }
