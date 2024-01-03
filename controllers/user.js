@@ -1,5 +1,5 @@
 
-const {User} = require('../models/User')
+const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -83,9 +83,73 @@ exports.user_signin_post = async (req, res) => {
 exports.user_show_get = (req, res) => {
     User.findById(req.query.id)
     .then((user)=> {
+        user.password = null;
         res.json({user})
     })
     .catch((err) => {
         console.log(err);
     })
 }
+
+exports.user_index_get = (req, res) => {
+    User.find()
+    .then((users) => {
+        res.json({users})
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
+
+exports.user_delete_get = (req, res) => {
+    User.findByIdAndDelete(req.query.id)
+    .then((user) => {
+        res.json({user})
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
+
+
+exports.user_edit_get = (req, res) => {
+    User.findById(req.query.id)
+    .then((user) => {
+        res.json({user})
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
+
+exports.user_update_put = (req, res) => {
+    console.log(req.body._id);
+    // console.log(req.body)
+    const userData = req.body;
+
+    User.findById(userData._id)
+    .then((userToUpdate) => {
+
+        if (userData.password !== null && userData.password !== undefined) {
+            const hashedPassword = bcrypt.hashSync(userData.password, salt);
+            userData.password = hashedPassword;
+        } else {
+            // If the password is not provided, use the existing hashed password
+            userData.password = userToUpdate.password;
+        }
+
+        User.findByIdAndUpdate(req.body._id, userData, {new: true})
+        .then((user) => {
+            res.json({user})
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+
+}
+
+
