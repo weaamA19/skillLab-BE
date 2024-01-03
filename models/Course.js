@@ -24,7 +24,7 @@ const coursesSchema = new Schema(
     },
 
     price: {
-      type: String,
+      type: Number,
       required: true
     }
 
@@ -37,5 +37,5 @@ const coursesSchema = new Schema(
 
 // module.exports = mongoose.model("User", userSchema);
 
-const Courses = mongoose.model("Courses", coursesSchema);
-module.exports = {Courses};
+const Course = mongoose.model("Course", coursesSchema);
+module.exports = {Course};

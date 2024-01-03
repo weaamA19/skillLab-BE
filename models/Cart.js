@@ -5,12 +5,13 @@ const cartSchema = new Schema(
   {
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      unique: true
     },
 
     courses: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Courses'
+      ref: 'Course'
     }],
 
   },

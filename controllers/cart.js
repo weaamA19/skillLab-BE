@@ -1,5 +1,5 @@
 const {User} = require('../models/User');
-const {Courses} = require('../models/Courses');
+const {Course} = require('../models/Course');
 const { Cart } = require('../models/Cart');
 
 const dayjs = require('dayjs');
@@ -34,7 +34,6 @@ exports.cart_index_get = (req, res) => {
   console.log("req.body", req.query.id)
 
   Cart.findOne({ user_id: req.query.id }).populate('user_id').populate('courses')
-  // Cart.find().populate('user_id').populate('courses') 
   .then((cart) => {
         res.json({ cart })
     })
@@ -81,29 +80,86 @@ exports.cart_edit_get = (req,res) => {
   })
 }
 
-// This New Update function was used to ensure that 
-exports.cart_update_put = (req, res) => {
-  // console.log("Cart ID", req.body._id);
-  // console.log("Body", req.body);
+// First API Approach for adding new course.
+// exports.cart_update_put = (req, res) => {
+//   // console.log("Cart ID", req.body._id);
+//   // console.log("Body", req.body);
 
-  const newCourse = req.body.courses; 
-  Cart.findById(req.body._id)
-    .then((cart) => {
-      if (!cart) {
-        return res.status(404).json({ message: 'Cart not found' });
-      }
+//   const newCourse = req.body.courses; 
+//   Cart.findById(req.body._id)
+//     .then((cart) => {
+//       if (!cart) {
+//         return res.status(404).json({ message: 'Cart not found' });
+//       }
 
-      cart.courses.push(newCourse); // Append the new course to the existing "courses" array
+//       cart.courses.push(newCourse); // Append the new course to the existing "courses" array
 
-      return cart.save(); // Save the updated cart
-    })
-    .then((updatedCart) => {
-      res.json({ cart: updatedCart });
-    })
-    .catch((error) => {
-      console.log(error);
+//       return cart.save(); // Save the updated cart
+//     })
+//     .then((updatedCart) => {
+//       res.json({ cart: updatedCart });
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.status(500).json({ message: 'Error updating cart' });
+//     });
+// };
+
+// Second Approach to update function 
+exports.cart_update_put = async (req, res) => {
+  const newCourse = req.body.courses;
+  console.log(newCourse)
+  try {
+    let cart = await Cart.findById(req.body._id);
+    
+    console.log(cart)
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    // Check if the new course already exists in the cart
+    const courseExists = cart.courses.includes(newCourse);
+
+    if (courseExists) {
+      return res.status(400).json({ message: 'Course already exists in the cart' });
+    }
+
+    cart.courses.push(newCourse); // Append the new course to the existing "courses" array
+
+    let updatedCart = await cart.save(); // Save the updated cart
+    
+    
+    res.json({ cart: updatedCart });
+  } catch (error) {
+    console.log(error);
       res.status(500).json({ message: 'Error updating cart' });
-    });
+  }
+  
+  // Cart.findById(req.body._id)
+  //   .then((cart) => {
+  //     console.log(cart)
+  //     if (!cart) {
+  //       return res.status(404).json({ message: 'Cart not found' });
+  //     }
+
+  //     // Check if the new course already exists in the cart
+  //     const courseExists = cart.courses.includes(newCourse);
+
+  //     if (courseExists) {
+  //       return res.status(400).json({ message: 'Course already exists in the cart' });
+  //     }
+
+  //     cart.courses.push(newCourse); // Append the new course to the existing "courses" array
+
+  //     return cart.save(); // Save the updated cart
+  //   })
+  //   .then((updatedCart) => {
+  //     res.json({ cart: updatedCart });
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //     res.status(500).json({ message: 'Error updating cart' });
+  //   });
 };
 
 exports.cart_courses_delete = (req, res) => {
