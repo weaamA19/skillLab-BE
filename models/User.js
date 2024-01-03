@@ -8,7 +8,14 @@ const userSchema = new Schema(
       required: true,
       unique: true
     },
-
+    firstName:{
+      type:String,
+      required:true
+    },
+    lastName:{
+      type:String,
+      required:true
+    },
     userType: {
       type: String,
       default: "2",
@@ -36,4 +43,4 @@ const userSchema = new Schema(
 // module.exports = mongoose.model("User", userSchema);
 
 const User = mongoose.model("User", userSchema);
-module.exports = {User};
+module.exports = User;
