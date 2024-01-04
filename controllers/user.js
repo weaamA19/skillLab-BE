@@ -153,3 +153,19 @@ exports.user_update_put = (req, res) => {
 }
 
 
+exports.user_mycourses_get = (req, res) => {
+    const userId = req.params.userId;
+  
+    User.findById(req.user.id)
+      .populate('enrolledCourses')
+      .then((user) => {
+        if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ enrolledCourses: user.enrolledCourses });
+      })
+      .catch((error) => {
+        console.error('Error fetching enrolled courses:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+      });
+};

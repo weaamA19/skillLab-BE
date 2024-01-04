@@ -9,6 +9,7 @@ router.use(express.json());
 // Require user controller
 const userCtrl = require('../controllers/user');
 
+const isLoggedIn = require('../helper/isLoggedIn');
 
 //Routs
 router.post("/signup", userCtrl.user_signup_post);
@@ -21,6 +22,7 @@ router.delete("/delete", userCtrl.user_delete_get);
 router.get("/edit", userCtrl.user_edit_get);
 router.put("/update", userCtrl.user_update_put);
 
+router.get("/mycourses", isLoggedIn, userCtrl.user_mycourses_get);
 
 
 //Export

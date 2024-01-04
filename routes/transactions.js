@@ -9,16 +9,17 @@ router.use(express.json());
 // Require transactions controller
 const transactionsCtrl = require('../controllers/transactions');
 
+const isLoggedIn = require('../helper/isLoggedIn');
 
 //Routs
-router.get('/index', transactionsCtrl.transactions_index_get)
-router.get('/add', transactionsCtrl.transactions_create_get)
-router.post('/add', transactionsCtrl.transactions_create_post)
-router.get('/detail', transactionsCtrl.transaction_show_get)
-router.delete('/delete', transactionsCtrl.transactions_delete_get)
-router.get('/edit', transactionsCtrl.transactions_edit_get)
-router.put('/update', transactionsCtrl.transactions_update_put)
-router.get("/:cartId", transactionsCtrl.transactions_calculateTotalAmount);
+router.get('/index', isLoggedIn, transactionsCtrl.transactions_index_get)
+router.get('/add', isLoggedIn, transactionsCtrl.transactions_create_get)
+router.post('/add', isLoggedIn, transactionsCtrl.transactions_create_post)
+router.get('/detail', isLoggedIn, transactionsCtrl.transaction_show_get)
+router.delete('/delete', isLoggedIn, transactionsCtrl.transactions_delete_get)
+router.get('/edit', isLoggedIn, transactionsCtrl.transactions_edit_get)
+router.put('/update', isLoggedIn, transactionsCtrl.transactions_update_put)
+router.get("/:cartId", isLoggedIn, transactionsCtrl.transactions_calculateTotalAmount);
 
 
 //Export

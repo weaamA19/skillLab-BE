@@ -33,7 +33,12 @@ const userSchema = new Schema(
         type: String,
         required: true,
         minlength: [8, "Your Password is too weak !"]
-    }
+    },
+    
+    enrolledCourses: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Course'
+    }]
   },
   {
     timestamps: true,
