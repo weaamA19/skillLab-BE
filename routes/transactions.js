@@ -11,6 +11,8 @@ const transactionsCtrl = require('../controllers/transactions');
 
 const isLoggedIn = require('../helper/isLoggedIn');
 
+const {checkType} = require('../config/checkType');
+
 //Routs
 router.get('/index', isLoggedIn, transactionsCtrl.transactions_index_get)
 router.get('/add', isLoggedIn, transactionsCtrl.transactions_create_get)
