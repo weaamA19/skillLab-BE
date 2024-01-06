@@ -38,7 +38,9 @@ const userSchema = new Schema(
     enrolledCourses: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Course'
-    }]
+    }], 
+
+    avatar: String
   },
   {
     timestamps: true,

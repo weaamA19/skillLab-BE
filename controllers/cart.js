@@ -110,33 +110,59 @@ exports.cart_update_put = async (req, res) => {
   const newCourse = req.body.courses;
   console.log("newCourse", newCourse)
   try {
-    let cart = await Cart.findOne({ user_id: req.user.id });
+    let cart = await
+      Cart.findOne({ user_id: req.user.id })
+        .then(cr => {
+          if (cr) {
+    // Check if the new course already exists in the cart
+    const courseExists = cr.courses.includes(newCourse);
+
+    if (courseExists) {
+        console.log("Course already exists in the cart")
+
+        return res.status(200).json({ message: 'Course already exists in the cart' });
+      }
+
+      cr.courses.push(newCourse); // Append the new course to the existing "courses" array
+
+      let updatedCart = cr.save(); // Save the updated cart
+      
+      console.log("Course added to the cart")
+      return res.status(200).json({ 
+        message: 'Course was added to the cart!', 
+        cart: updatedCart 
+      });
+          }
+          else {
+            const cart = new Cart({ user_id: req.user.id })
+            // Check if the new course already exists in the cart
+            const courseExists = cart.courses.includes(newCourse);
+
+            if (courseExists) {
+                console.log("Course already exists in the cart")
+
+                return res.status(200).json({ message: 'Course already exists in the cart' });
+              }
+
+              cart.courses.push(newCourse); // Append the new course to the existing "courses" array
+
+              let updatedCart = cart.save(); // Save the updated cart
+              
+              console.log("Course added to the cart")
+              return res.status(200).json({ 
+                message: 'Course was added to the cart!', 
+                cart: updatedCart 
+              });
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
     if (!cart) {
       console.log("cart not found")
       return res.status(404).json({ message: 'Cart not found' });
     }
-    console.log("cart found")
-
-    // Check if the new course already exists in the cart
-    const courseExists = cart.courses.includes(newCourse);
-
-    if (courseExists) {
-      console.log("Course already exists in the cart")
-
-      return res.status(200).json({ message: 'Course already exists in the cart' });
-    }
-
-    cart.courses.push(newCourse); // Append the new course to the existing "courses" array
-
-    let updatedCart = await cart.save(); // Save the updated cart
-    
-    console.log("Course added to the cart")
-    return res.status(200).json({ 
-      message: 'Course was added to the cart!', 
-      cart: updatedCart 
-    });
-
-    // res.json({ cart: updatedCart });
   } catch (error) {
     console.log(error);
       res.status(500).json({ message: 'Error updating cart' });
@@ -259,7 +285,7 @@ exports.cart_courses_delete = (req, res) => {
 //           console.error('Error finding cart:', error);
 //           res.status(500).json({ message: 'Error finding cart' });
 //         });
-//     })
+//     })User
 //     .catch((error) => {
 //       console.error('Error finding user:', error);
 //       res.status(500).json({ message: 'Error finding user' });

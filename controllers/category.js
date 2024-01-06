@@ -10,13 +10,15 @@ exports.category_add_get = (req, res) => {
     res.render('category/add');
 }
 
-exports.category_add_post = async (req, res) => {  
+exports.category_add_post =  (req, res) => {  
     console.log("req.body");  
 
-    console.log(req.body);  
+    console.log(req.body.name);  
 
     let category = new Category(req.body);
-
+    if (req.file) {
+        category.avatar = req.file.filename; // Update the avatar if a new file is uploaded
+    }
     category.save()
     .then((category) =>{
         res.json({category})
@@ -73,8 +75,11 @@ exports.category_edit_get = (req,res) => {
 }
 
 exports.category_update_post = (req,res) => {
-    console.log(req.body._id);
-
+    console.log(req.body);
+    if (req.file) {
+        req.body.avatar = req.file.filename; // Update the avatar if a new file is uploaded
+    }
+    
     Category.findByIdAndUpdate(req.body._id, req.body, {new: true})
     .then((category) => {
         res.json({category})
