@@ -9,13 +9,17 @@ salt = 10;
 // RESTFUL API's for Registration and Authentication
 
 exports.user_signup_post = (req, res) => {
-    let user = new User(req.body);
+    let user = new User(JSON.parse(req.body.user));
 
-    let hash = bcrypt.hashSync(req.body.password, salt);
+    let hash = bcrypt.hashSync(user.password, salt);
     console.log(hash);
 
     user.password = hash;
-
+    if (req.file) {
+        user.avatar = req.file.filename; 
+    } else {
+        user.avatar = 'profile.svg';
+    }
     user.save()
     .then(()=> {
         res.json({"message": "User Created Successfully!!!" })
@@ -123,9 +127,15 @@ exports.user_edit_get = (req, res) => {
 }
 
 exports.user_update_put = (req, res) => {
-    console.log(req.body._id);
-    // console.log(req.body)
-    const userData = req.body;
+
+    // const userData = req.body;
+    const userData = JSON.parse(req.body.user);
+
+    if (req.file) {
+        userData.avatar = req.file.filename; // Update the avatar if a new file is uploaded
+    } else {
+        userData.avatar = userData.avatar;
+    }
 
     User.findById(userData._id)
     .then((userToUpdate) => {
@@ -138,7 +148,7 @@ exports.user_update_put = (req, res) => {
             userData.password = userToUpdate.password;
         }
 
-        User.findByIdAndUpdate(req.body._id, userData, {new: true})
+        User.findByIdAndUpdate(userData._id, userData, {new: true})
         .then((user) => {
             res.json({user})
         })

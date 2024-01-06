@@ -38,7 +38,12 @@ const userSchema = new Schema(
     enrolledCourses: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Course'
-    }]
+    }], 
+
+    avatar: {
+      type: String,
+      default: "../public/uploads/profile.svg"
+    }
   },
   {
     timestamps: true,

@@ -3,11 +3,8 @@ const mongoose = require('mongoose');
 // Category Schema
 const categorySchema = mongoose.Schema({
 
-  name: String
-  // item_img: {
-  //   type: String,
-  //   default: "",
-  // },
+  name: String,
+  avatar: String
 }, {
   timestamps: true
 })
