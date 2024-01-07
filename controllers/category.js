@@ -18,6 +18,8 @@ exports.category_add_post =  (req, res) => {
     let category = new Category(req.body);
     if (req.file) {
         category.avatar = req.file.filename; // Update the avatar if a new file is uploaded
+    } else {
+        category.avatar = 'download.jpg';
     }
     category.save()
     .then((category) =>{
@@ -45,7 +47,7 @@ exports.category_show_get = (req, res) => {
     Category.findById(req.query.id)
     .then((category) => {
         console.log(category)
-        res.render('category/detail', {category, dayjs})
+        res.json({category, dayjs})
     })
     .catch((err) => {
         console.log(err);

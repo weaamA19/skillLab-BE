@@ -9,6 +9,7 @@ router.use(express.json());
 // Require cart controller
 const cartCtrl = require('../controllers/cart');
 const isLoggedIn = require('../helper/isLoggedIn');
+const {checkType} = require('../config/checkType');
 
 
 //Routes
